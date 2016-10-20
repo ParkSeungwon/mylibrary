@@ -74,8 +74,8 @@ void Server::start(function<string(string)> functor)
 					send(functor(s));
 					alarm(time_out);
 				}
-			cout << "ending child" << endl;
-			break;
+				cout << "ending child" << endl;
+				break;
 			}
 		}
 	}
