@@ -24,7 +24,7 @@ public:
 	int select(std::string table, std::string where = "");
 	bool insert();
 	
-	std::string password(std::string pass);
+	std::string encrypt(std::string pass);
 	std::vector<std::string> show_tables();
 	std::string now();//system clock->mysql datetime string
 	template <typename... Args> int group_by(Args... args)

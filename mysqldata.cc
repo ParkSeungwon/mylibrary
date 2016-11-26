@@ -33,7 +33,7 @@ string SqlQuery::now()
 	return res->getString(1);
 }
 
-string SqlQuery::password(string s)
+string SqlQuery::encrypt(string s)
 {
 	myQuery("select password('" + s + "');");
 	res->next();
