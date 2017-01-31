@@ -12,6 +12,35 @@ bool SqlData::is_int(int n)
 std::vector<Any>* SqlData::begin() {return &contents[0];}
 std::vector<Any>* SqlData::end() {return &contents[contents.size()];}
 
+void SqlQuery::create_table(string tb) {
+	table_name = tb;
+	string s = "create table ";
+	s += tb + " (";
+	for(auto& a : structure) {
+		for(auto& b : a.first) if(b == ' ') b = '_';
+		s += a.first + ' ';
+		s += a.second + ',';
+	}
+	s.back() = ')';
+	s += ';';
+	cout << s << endl;
+	myQuery(s);
+}
+
+bool SqlQuery::insert(vector<string> v) 
+{//d should be 1 record
+	string q = "insert into " + table_name + " values (";
+	for(int i=0; i<structure.size(); i++) {
+		string s = v[i];
+		if(structure[i].second == "INT" || structure[i].second == "FLOAT") 
+			q += s + ",";
+		else q += "'" + s + "',";
+	}
+	q.back() = ')';
+	q += ";";
+	return myQuery(q);
+}
+
 bool SqlQuery::insert()
 {//d should be 1 record
 	auto& record = contents[0];

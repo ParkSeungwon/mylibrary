@@ -11,6 +11,9 @@ public:
 	std::vector<Any>* end(); 
 	bool is_int(int nth_column);
 	bool empty() {return contents.empty();}
+	std::vector<std::pair<std::string, std::string>>& desc() {
+		return structure;
+	}
 
 protected:
 	std::string table_name;
@@ -23,8 +26,10 @@ class SqlQuery : public Mysqlquery, public SqlData
 public:
 	int select(std::string table, std::string where = "");
 	bool insert();
+	bool insert(std::vector<std::string> v);
 	
 	std::string encrypt(std::string pass);
+	void create_table(std::string tb);
 	std::vector<std::string> show_tables();
 	std::string now();//system clock->mysql datetime string
 	template <typename... Args> int group_by(Args... args)
