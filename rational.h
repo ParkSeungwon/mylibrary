@@ -5,7 +5,7 @@
 class Ratio
 {
 public:
-	int n, den;
+	int n, den;// n / den
 	
 	Ratio(int n = 0, int den = 1);
 	bool operator==(const Ratio& r) {return (n == r.n) && (den == r.den);}

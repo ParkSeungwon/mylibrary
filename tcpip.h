@@ -1,10 +1,10 @@
 //tcpip.h class definition
+#pragma once
 #include <string>
-#include <thread>
 #include <arpa/inet.h>
 
 class Tcpip 
-{
+{//c library wrapper 
 public:
 	Tcpip(int port);
 	virtual ~Tcpip();
@@ -12,27 +12,11 @@ public:
 	std::string recv();
 
 protected:
-	int server_fd, client_fd;
+	int server_fd;///<server_fd입니다.
+	int client_fd;
 	struct sockaddr_in server_addr, client_addr;
+	char buffer[1024];
 
 private:
-	char buffer[1024];
 };
 
-class Client : public Tcpip
-{
-public:
-	Client(std::string ip = "127.0.0.1", int port = 2001); 
-};
-
-class Server : public Tcpip
-{
-public:
-	Server(int port = 2001, unsigned int time_out = 600, int queue = 10, std::string e = "end");
-	void start(std::function<std::string(std::string)> functor);
-
-protected:
-	static void timed_out(int sig);
-	std::string end_string;
-	unsigned int time_out;
-};
