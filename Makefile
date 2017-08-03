@@ -4,7 +4,7 @@ all : $(OBJ)
 	ar rcs libzezeon.a *.o
 
 %.o : %.cc
-	g++ -c -std=c++11 $<
+	g++ -c -std=c++14 $<
 
 install : 
 	cp *.h /usr/local/include
