@@ -6,7 +6,10 @@
 #include<sys/stat.h>
 #include<cmath>
 #include<cassert>
+#include<thread>
+#include"autothread.h"
 #include"plot.h"
+#include"util.h"
 using namespace std;
 
 valarray<float> linspace(float start, float stop, int size)
@@ -24,16 +27,6 @@ std::valarray<float> arange(float start, float step, float stop)
 	return v;
 }
 
-string psstm(string command)
-{//return system call output as string
-	string s;
-	char tmp[1000];
-	FILE* f = popen(command.c_str(), "r");
-	while(fgets(tmp, sizeof(tmp), f)) s += tmp;
-	pclose(f);
-	return s;
-}
-
 string plot(const valarray<float>& x, const valarray<float>& y)
 {
 	int sz = x.size();
@@ -48,21 +41,52 @@ string plot(const valarray<float>& x, const valarray<float>& y)
 		*ptr++ = y[i];
 	}
 	
-	string command = "plot.py ";
+	string command = R"(python -c "
+import sys, posix_ipc, os, struct
+import matplotlib.pyplot as plt
+
+sz = int(sys.argv[1])
+f = posix_ipc.SharedMemory('plot1')
+x = [0] * sz
+y = [0] * sz
+for i in range(sz):
+    x[i], y[i] = struct.unpack('ff', os.read(f.fd, 8))
+os.close(f.fd)
+plt.plot(x, y)
+plt.show()
+" )";
 	string s = psstm(command + to_string(sz));
 	shm_unlink(name);
 	return s;
 }
 
-complex<float> DFT(const valarray<float>& x, float w)
+string plot(const valarray<float>& x, const valarray<complex<float>>& y)
 {
+	valarray<float> z(y.size());
+	for(int i=0; i<z.size(); i++) z[i] = y[i].real();
+	return plot(x, z);
+}
+
+complex<float> DFT1(const valarray<float>& x, float w)
+{//discrete fourier transform
 	complex<float> im = 0;
 	for(float i=0; i<x.size(); i++) im += x[i] * exp(-1if * w * i);//sampling rate
 	return im;
 }
 
-complex<float> IDFT(const std::valarray<std::complex<float>>& Xw, int n)
+valarray<complex<float>> DFT(const valarray<float>& x, const valarray<float>& w)
 {
+	AutoThread at;
+	vector<future<complex<float>>> vf;
+	valarray<complex<float>> v(w.size());
+	for(int i=0; i<v.size(); i++) vf.push_back(at.add_thread(bind(DFT1, x, w[i])));
+	for(int i=0; i<v.size(); i++) v[i] = vf[i].get();
+//	for(int i=0; i<v.size(); i++) v[i] = DFT(x, w[i]);
+	return v;
+}
+
+complex<float> IDFT(const std::valarray<std::complex<float>>& Xw, int n)
+{//inverse DFT
 	float dw = 2 * M_PI / Xw.size();
 	complex<float> im = 0;
 	float i = 0;
