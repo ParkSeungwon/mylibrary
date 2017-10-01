@@ -162,6 +162,13 @@ public:
 protected:
 	Vertex<T>* root = nullptr;
 	
+	void gfree(Vertex<T>* p) {
+		if(!p) return;
+		efree(p->edge);
+		gfree(p->vertex);
+		delete p;
+	}
+	
 	Vertex<T>* insert(Vertex<T>* p, T n) {//recursively insert a value 'n'
 		if(!p) {
 			p = new Vertex<T>;
@@ -252,13 +259,6 @@ private:
 		if(!e) return;
 		efree(e->edge);
 		delete e;
-	}
-	
-	void gfree(Vertex<T>* p) {
-		if(!p) return;
-		efree(p->edge);
-		gfree(p->vertex);
-		delete p;
 	}
 	
 	void clearv() {

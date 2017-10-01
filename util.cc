@@ -1,5 +1,6 @@
 #include<vector>
 #include<fstream>
+#include"util.h"
 using namespace std;
 
 void serialize(const vector<string>& v, string filename) 
@@ -40,4 +41,34 @@ string psstm(string command)
 	while(fgets(tmp, sizeof(tmp), f)) s += tmp;
 	pclose(f);
 	return s;
+}
+
+
+string param(const string& post, const string& par) 
+{//env(QUERY_STRING), parameter 
+	int pos = post.find(par);
+	pos = pos + par.length() + 1;
+	int end = post.find('&', pos);
+	
+	string s = post.substr(pos, end - pos);
+	for(pos = s.find('+', 0); pos != string::npos; pos = s.find('+', pos))
+		s.replace(pos, 1, 1, ' ');
+	for(pos = s.find('%', 0); pos != string::npos; pos = s.find('%', pos))
+		s.replace(pos, 3, 1, (char)stoi(s.substr(pos + 1, 2), nullptr, 16));
+	return s;
+}
+
+map<string, string> parse_post(istream& post)
+{
+	map<string, string> m;
+	string s, value;
+	while(getline(post, s, '&')) {
+		int pos = s.find('=');
+		value = s.substr(pos+1);
+		for(auto& a : value) if(a == '+') a = ' ';
+		for(int i = value.find('%'); i != string::npos; i = value.find('%', i))
+			value.replace(i, 3, 1, (char)stoi(value.substr(i + 1, 2), nullptr,16));
+		m[s.substr(0, pos)] = value;
+	}
+	return m;
 }
