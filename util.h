@@ -9,3 +9,4 @@ std::string psstm(std::string command);
 std::string get_url(std::string);
 std::map<std::string, std::string> parse_post(std::istream& post);
 std::string param(const std::string& post_string, const std::string& parameter);
+std::map<std::string, int> getdir(std::string dir);
