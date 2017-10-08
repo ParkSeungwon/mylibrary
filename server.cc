@@ -57,3 +57,16 @@ void Server::start(function<string(string)> f)
 	}
 }
 
+void Server::nokeep_start(function<string(string)> f)
+{
+	int cl_size = sizeof(client_addr);
+	while(true) {
+		client_fd = accept(server_fd, (sockaddr*)&client_addr, (socklen_t*)&cl_size);
+		if(client_fd == -1) cout << "accept() error" << endl;
+		else {//connection established
+			cout << "accepting" << endl;
+			send(f(recv()));
+		}
+	}
+}
+

@@ -32,7 +32,7 @@ bool SqlQuery::insert(vector<string> v)
 	string q = "insert into " + table_name + " values (";
 	for(int i=0; i<structure.size(); i++) {
 		string s = v[i];
-		if(structure[i].second == "INT" || structure[i].second == "FLOAT") 
+		if(structure[i].second == "INT" || structure[i].second == "FLOAT" || s == "null") 
 			q += s + ",";
 		else q += "'" + s + "',";
 	}
