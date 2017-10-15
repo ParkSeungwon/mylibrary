@@ -16,12 +16,12 @@ protected:
 	std::deque<T> q;///<queue to send
 	std::function<T()> provider;///<auto respond func
 	std::function<void(T)> consumer;
+	bool finish = false;
 
 private:
 	std::thread thi, tho;
 	std::mutex mtx;
 	std::condition_variable cv;
-	bool finish = false;
 	void provide();
 	void consume();
 };

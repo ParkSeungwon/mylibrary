@@ -13,7 +13,7 @@ Client::Client(string ip, int port) : Tcpip(port)
 	server_addr.sin_addr.s_addr = inet_addr(get_addr(ip).c_str());
 	if(-1 == connect(client_fd, (sockaddr*)&server_addr, sizeof(server_addr)))
 		cout << "connect() error" << endl;
-	else cout << "connecting"  <<endl;
+	else cout << "connecting to " << ip << ':' << port  <<endl;
 }
 
 string Client::get_addr(string host)

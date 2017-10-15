@@ -23,13 +23,13 @@ Tcpip::~Tcpip()
 }
 void Tcpip::send(string s) 
 {
-	write(client_fd, s.c_str(), s.size()+1);
+	write(client_fd, s.data(), s.size()+1);
 }
 
 string Tcpip::recv()
 {
 	int i = read(client_fd, buffer, 4095999);//error
 	buffer[i] = '\0';
-	return string(buffer);
+	return string(buffer, i);
 }
 

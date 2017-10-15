@@ -6,7 +6,7 @@
 class Tcpip 
 {//c library wrapper 
 public:
-	Tcpip(int port);
+	Tcpip(int port = 2001);
 	virtual ~Tcpip();
 	void send(std::string s);
 	std::string recv();
