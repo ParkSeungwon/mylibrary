@@ -5,3 +5,7 @@
 *.vim
 *.o
 *.a
+find
+.
+-size
++3M
